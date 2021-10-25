@@ -36,6 +36,16 @@ for (i_X = 1:n_X)
     Y(i_X).customDir = 0;
     Y(i_X).objScale = objScale(X(i_X).vehicleSize, VehicleType);
     Y(i_X).objRot = objRot(X(i_X).vehicleSize, VehicleType);
+    Y(i_X).startPos = sprintf('"%g,0,2.8288"', -X(i_X).TTCv_s_*3*X(i_X).vV_km_h_*0.277778);
+    Y(i_X).endPos = sprintf('"%g,0,2.8288"', -X(i_X).TTCv_s_*X(i_X).vV_km_h_*0.277778);
+    Y(i_X).velocity = X(i_X).vV_km_h_*0.277778;
+    Y(i_X).timeVisible = 3;
+    Y(i_X).rotationSpeedX = 0;
+    Y(i_X).rotationSpeedY = 0;
+    Y(i_X).rotationSpeedZ = 0;
+    Y(i_X).offsetX = -1;
+    Y(i_X).offsetY = 0;
+    Y(i_X).offsetZ = 0;
 end
 
 
