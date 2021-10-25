@@ -52,7 +52,31 @@ end
 
 Y_table = struct2table(Y);
 
+% fixme: an empty string can not be expressed correctly in the output table
 writetable(Y_table, path_output);
+
+% writetable_emptystr(Y_table, path_output);
+
+% function writetable_emptystr(table, path)
+% 	[m, n] = size(table);
+%     f_out = fopen(path, 'w');
+%     row_str = table.Properties.VariableNames{1};
+%     for i_c = 2 : n
+%         row_str = row_str + "," + table.Properties.VariableNames{i_c};
+%     end
+%     fprintf(f_out, "%s", row_str);
+%     for i_r = 1 : m
+%         row_str = sprintf("%d, %s, %d, %s, %d, %s, %s" ...
+%         				, Y_table{1} ...
+%         				, Y_table{2} ...
+%         				, Y_table{3} ...
+%         				, Y_table{4} ...
+%         				, Y_table{5} ...
+%         				, Y_table{6} ...
+%         				, Y_table{7});
+%     end
+%     fclose(f_out);
+% end
 
                
 
