@@ -23,7 +23,7 @@ X = table2struct(X_table);
 
 [n_X, ~] = size(X);
 
-for i_X = 1:n_X
+for i_X = n_X:-1:1
     Y(i_X).trialNum = i_X;
     Y(i_X).trialName = sprintf('%sx%gx%dx%gx%s' ...
 					, X(i_X).ModalityCondition ...
