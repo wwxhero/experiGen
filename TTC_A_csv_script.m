@@ -26,8 +26,8 @@ for i_X = n_X:-1:1
     Y(i_X).customMot = 'FALSE';
     Y(i_X).customFile = '""';
     Y(i_X).customDur = 0;
-    Y(i_X).objScale = veh.objScale(X(i_X).vehicleSize);
-    Y(i_X).objRot = veh.objRot(X(i_X).vehicleSize);
+    Y(i_X).objScale = veh.objScale_csv(X(i_X).vehicleSize);
+    Y(i_X).objRot = veh.objRot_csv(X(i_X).vehicleSize);
     Y(i_X).startPos = sprintf('"%g,0,2.8288"', -(X(i_X).TTCa_s_+3)*X(i_X).vA_km_h_*0.277778);
     Y(i_X).endPos = sprintf('"%g,0,2.8288"', -X(i_X).TTCa_s_*X(i_X).vA_km_h_*0.277778);
     Y(i_X).velocity = X(i_X).vA_km_h_*0.277778;
@@ -40,33 +40,18 @@ for i_X = n_X:-1:1
     Y(i_X).offsetZ = 0;
 end
 
+I_perm = randperm(n_X);
+Y_perm = Y;
 
+for i_I_perm = n_X:-1:1
+    i_Y = I_perm(i_I_perm);
+    Y_perm(i_I_perm) = Y(i_Y);
+end
 
-Y_table = struct2table(Y);
+Y_table = struct2table(Y_perm);
 
 % fixme: an empty string can not be expressed correctly in the output table
 writetable(Y_table, path_output);
 
-% writetable_emptystr(Y_table, path_output);
 
-% function writetable_emptystr(table, path)
-% 	[m, n] = size(table);
-%     f_out = fopen(path, 'w');
-%     row_str = table.Properties.VariableNames{1};
-%     for i_c = 2 : n
-%         row_str = row_str + "," + table.Properties.VariableNames{i_c};
-%     end
-%     fprintf(f_out, "%s", row_str);
-%     for i_r = 1 : m
-%         row_str = sprintf("%d, %s, %d, %s, %d, %s, %s" ...
-%         				, Y_table{1} ...
-%         				, Y_table{2} ...
-%         				, Y_table{3} ...
-%         				, Y_table{4} ...
-%         				, Y_table{5} ...
-%         				, Y_table{6} ...
-%         				, Y_table{7});
-%     end
-%     fclose(f_out);
-% end
 

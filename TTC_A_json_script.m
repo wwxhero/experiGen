@@ -41,7 +41,16 @@ for i_X = n_X:-1:1
     Y(i_X).objects = {object};
 end
 
-output_js.trials = Y;
+I_perm = randperm(n_X);
+Y_perm = Y;
+
+for i_I_perm = n_X:-1:1
+    i_Y = I_perm(i_I_perm);
+    Y_perm(i_I_perm) = Y(i_Y);
+end
+
+
+output_js.trials = Y_perm;
 
 Y_json = jsonencode(output_js, 'PrettyPrint', true);
 
