@@ -1,20 +1,7 @@
 path_input = './TTC_A/TTC_design_A_3-5.csv';
 path_output = './TTC_A/TTC_design_A_3-5_full.csv';
 
-VEHICLETYPE(1).vehicleSize = 'small';
-VEHICLETYPE(1).objType = '01-Golf Variant';
-VEHICLETYPE(1).objScale = '"1, 1, 1"';
-VEHICLETYPE(1).objRot = '"-90,0,90"';
-
-VEHICLETYPE(2).vehicleSize = 'large';
-VEHICLETYPE(2).objType = 'PickUp_3A Variant';
-VEHICLETYPE(2).objScale = '"0.826,0.878,1"';
-VEHICLETYPE(2).objRot = '"0,90,0"';
-
-VEHICLETYPE(3).vehicleSize = 'NA';
-VEHICLETYPE(3).objType = 'Audio';
-VEHICLETYPE(3).objScale = '"1,1,1"';
-VEHICLETYPE(3).objRot = '"0,90,0"';
+veh = VehicleObj;
 
 X_table = readtable(path_input, 'PreserveVariableNames', true);
 X = table2struct(X_table);
@@ -30,17 +17,17 @@ for i_X = n_X:-1:1
 					, X(i_X).TTCa_s_ ...
 					, X(i_X).vA_km_h_ ...
 					, X(i_X).SoundLevel_dB_ ...
-					, objType(X(i_X).vehicleSize, VEHICLETYPE));
+					, veh.objType(X(i_X).vehicleSize));
     Y(i_X).corrAns = 0;
     Y(i_X).playSound = 'FALSE';
     Y(i_X).objNum = 2;
-    Y(i_X).objType = objType(X(i_X).vehicleSize, VEHICLETYPE);
+    Y(i_X).objType = veh.objType(X(i_X).vehicleSize);
     Y(i_X).gain = X(i_X).SoundLevel_dB_;
     Y(i_X).customMot = 'FALSE';
     Y(i_X).customFile = '""';
     Y(i_X).customDur = 0;
-    Y(i_X).objScale = objScale(X(i_X).vehicleSize, VEHICLETYPE);
-    Y(i_X).objRot = objRot(X(i_X).vehicleSize, VEHICLETYPE);
+    Y(i_X).objScale = veh.objScale(X(i_X).vehicleSize);
+    Y(i_X).objRot = veh.objRot(X(i_X).vehicleSize);
     Y(i_X).startPos = sprintf('"%g,0,2.8288"', -(X(i_X).TTCa_s_+3)*X(i_X).vA_km_h_*0.277778);
     Y(i_X).endPos = sprintf('"%g,0,2.8288"', -X(i_X).TTCa_s_*X(i_X).vA_km_h_*0.277778);
     Y(i_X).velocity = X(i_X).vA_km_h_*0.277778;
@@ -83,37 +70,3 @@ writetable(Y_table, path_output);
 %     fclose(f_out);
 % end
 
-               
-
-function v_type = objType(v_size, VehicleType)
-    [~, n_VehicleType] = size(VehicleType); 
-	for i_vt = 1:n_VehicleType
-		if (strcmp(v_size,VehicleType(i_vt).vehicleSize))
-			v_type = VehicleType(i_vt).objType;
-			return;
-        end
-	end
-	v_type = "undefined";
-end
-
-function v_scale = objScale(v_size, VehicleType)
-	[~, n_VehicleType] = size(VehicleType);
-	for i_vt = 1:n_VehicleType
-		if (strcmp(v_size,VehicleType(i_vt).vehicleSize))
-			v_scale = VehicleType(i_vt).objScale;
-			return;
-        end
-	end
-	v_scale = "undefined";
-end
-
-function v_rot = objRot(v_size, VehicleType)
-	[~, n_VehicleType] = size(VehicleType);
-	for i_vt = 1:n_VehicleType
-		if (strcmp(v_size,VehicleType(i_vt).vehicleSize))
-			v_rot = VehicleType(i_vt).objRot;
-			return;
-        end
-	end
-	v_rot = "undefined";
-end
