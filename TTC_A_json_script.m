@@ -1,5 +1,5 @@
 path_input = './TTC_A/TTC_design_A_3-5.csv';
-path_output = './TTC_A/TTC_design_A_3-5_full.csv';
+path_output = './TTC_A/TTC_design_A_3-5_full.json';
 
 veh = VehicleObj;
 
@@ -19,54 +19,37 @@ for i_X = n_X:-1:1
 					, X(i_X).SoundLevel_dB_ ...
 					, veh.objType(X(i_X).vehicleSize));
     Y(i_X).corrAns = 0;
-    Y(i_X).playSound = 'FALSE';
-    Y(i_X).objNum = 2;
-    Y(i_X).objType = veh.objType(X(i_X).vehicleSize);
-    Y(i_X).gain = X(i_X).SoundLevel_dB_;
-    Y(i_X).customMot = 'FALSE';
-    Y(i_X).customFile = '""';
-    Y(i_X).customDur = 0;
-    Y(i_X).objScale = veh.objScale(X(i_X).vehicleSize);
-    Y(i_X).objRot = veh.objRot(X(i_X).vehicleSize);
-    Y(i_X).startPos = sprintf('"%g,0,2.8288"', -(X(i_X).TTCa_s_+3)*X(i_X).vA_km_h_*0.277778);
-    Y(i_X).endPos = sprintf('"%g,0,2.8288"', -X(i_X).TTCa_s_*X(i_X).vA_km_h_*0.277778);
-    Y(i_X).velocity = X(i_X).vA_km_h_*0.277778;
-    Y(i_X).timeVisible = 3;
-    Y(i_X).rotationSpeedX = 0;
-    Y(i_X).rotationSpeedY = 0;
-    Y(i_X).rotationSpeedZ = 0;
-    Y(i_X).offsetX = -1;
-    Y(i_X).offsetY = 0;
-    Y(i_X).offsetZ = 0;
+    Y(i_X).playSound = false;
+    object.objNum = 2;
+    object.objType = veh.objType(X(i_X).vehicleSize);
+    object.gain = X(i_X).SoundLevel_dB_;
+    object.customMot = false;
+    object.customFile = "";
+    object.customDur = 0;
+    object.objScale = veh.objScale(X(i_X).vehicleSize);
+    object.objRot = veh.objRot(X(i_X).vehicleSize);
+    object.startPos = [-(X(i_X).TTCa_s_+3)*X(i_X).vA_km_h_*0.277778, 0, 2.8288];
+    object.endPos = [-X(i_X).TTCa_s_*X(i_X).vA_km_h_*0.277778,0,2.8288];
+    object.velocity = X(i_X).vA_km_h_*0.277778;
+    object.timeVisible = 3;
+    object.rotationSpeedX = 0;
+    object.rotationSpeedY = 0;
+    object.rotationSpeedZ = 0;
+    object.offsetX = -1;
+    object.offsetY = 0;
+    object.offsetZ = 0;
+    Y(i_X).objects = {object};
 end
 
+output_js.trials = Y;
+
+Y_json = jsonencode(output_js, 'PrettyPrint', true);
+
+f_out = fopen(path_output, 'w');
+fprintf(f_out, Y_json);
+fclose(f_out);
 
 
-Y_table = struct2table(Y);
 
-% fixme: an empty string can not be expressed correctly in the output table
-writetable(Y_table, path_output);
 
-% writetable_emptystr(Y_table, path_output);
-
-% function writetable_emptystr(table, path)
-% 	[m, n] = size(table);
-%     f_out = fopen(path, 'w');
-%     row_str = table.Properties.VariableNames{1};
-%     for i_c = 2 : n
-%         row_str = row_str + "," + table.Properties.VariableNames{i_c};
-%     end
-%     fprintf(f_out, "%s", row_str);
-%     for i_r = 1 : m
-%         row_str = sprintf("%d, %s, %d, %s, %d, %s, %s" ...
-%         				, Y_table{1} ...
-%         				, Y_table{2} ...
-%         				, Y_table{3} ...
-%         				, Y_table{4} ...
-%         				, Y_table{5} ...
-%         				, Y_table{6} ...
-%         				, Y_table{7});
-%     end
-%     fclose(f_out);
-% end
 
