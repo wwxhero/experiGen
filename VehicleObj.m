@@ -20,7 +20,7 @@ classdef VehicleObj
 				'objRot', [0,90,0] ...
 				), ...
 		];
-  		% VEHICLETYPE(1).vehicleSize = 'small';
+		% VEHICLETYPE(1).vehicleSize = 'small';
 		% VEHICLETYPE(1).objType = '01-Golf Variant';
 		% VEHICLETYPE(1).objScale = '"1, 1, 1"';
 		% VEHICLETYPE(1).objRot = '"-90,0,90"';
@@ -38,12 +38,12 @@ classdef VehicleObj
 
 	methods
 		function v_type = objType(obj, v_size)
-    		[~, n_VehicleType] = size(obj.VEHICLETYPE);
+			[~, n_VehicleType] = size(obj.VEHICLETYPE);
 			for i_vt = 1:n_VehicleType
 				if (strcmp(v_size,obj.VEHICLETYPE(i_vt).vehicleSize))
 					v_type = obj.VEHICLETYPE(i_vt).objType;
 					return;
-    		    end
+				end
 			end
 			assert(0);
 			v_type = "undefined";
@@ -55,11 +55,27 @@ classdef VehicleObj
 				if (strcmp(v_size,obj.VEHICLETYPE(i_vt).vehicleSize))
 					v_scale = obj.VEHICLETYPE(i_vt).objScale;
 					return;
-		        end
+				end
 			end
 			assert(0);
 			v_scale = "undefined";
 		end
+
+		function v_scale_csv = objScale_csv(obj, v_size)
+			[~, n_VehicleType] = size(obj.VEHICLETYPE);
+			for i_vt = 1:n_VehicleType
+				if (strcmp(v_size,obj.VEHICLETYPE(i_vt).vehicleSize))
+					v_scale_csv = sprintf('"%g, %g, %g"', ...
+										obj.VEHICLETYPE(i_vt).objScale(1), ...
+										obj.VEHICLETYPE(i_vt).objScale(2), ...
+										obj.VEHICLETYPE(i_vt).objScale(3));
+					return;
+				end
+			end
+			assert(0);
+			v_scale_csv = "undefined";
+		end
+
 
 		function v_rot = objRot(obj, v_size)
 			[~, n_VehicleType] = size(obj.VEHICLETYPE);
@@ -67,7 +83,22 @@ classdef VehicleObj
 				if (strcmp(v_size,obj.VEHICLETYPE(i_vt).vehicleSize))
 					v_rot = obj.VEHICLETYPE(i_vt).objRot;
 					return;
-		        end
+				end
+			end
+			assert(0);
+			v_rot = "undefined";
+		end
+
+		function v_rot = objRot_csv(obj, v_size)
+			[~, n_VehicleType] = size(obj.VEHICLETYPE);
+			for i_vt = 1:n_VehicleType
+				if (strcmp(v_size,obj.VEHICLETYPE(i_vt).vehicleSize))
+					v_rot = sprintf('"%g, %g, %g"', ...
+									obj.VEHICLETYPE(i_vt).objRot(1), ...
+									obj.VEHICLETYPE(i_vt).objRot(2), ...
+									obj.VEHICLETYPE(i_vt).objRot(3));
+					return;
+				end
 			end
 			assert(0);
 			v_rot = "undefined";
