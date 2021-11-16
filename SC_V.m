@@ -1,5 +1,5 @@
-path_input = './TTC_V/TTC_design_V_3-5.csv';
-path_output = './TTC_V/TTC_design_V_3-5_full.csv';
+path_input = './SC_V/SC_design_V_3-5.csv';
+path_output = './SC_V/SC_design_V_3-5_full.csv';
 
 VEHICLETYPE(1).vehicleSize = 'small';
 VEHICLETYPE(1).objType = '01-Golf Variant';
@@ -20,10 +20,12 @@ X = table2struct(X_table);
 
 for i_X = n_X:-1:1
     Y(i_X).trialNum = i_X;
-    Y(i_X).trialName = sprintf('%sx%gx%dx%sx%s' ...
+    Y(i_X).trialName = sprintf('%sx%gx%sx%dx%sx%sx%s' ...
 					, X(i_X).ModalityCondition ...
 					, X(i_X).TTCv_s_ ...
+					, X(i_X).TTCa_s_ ...
 					, X(i_X).vV_km_h_ ...
+					, X(i_X).SoundLevel_dB_ ...
 					, X(i_X).TTCa_s_ ...
 					, objType(X(i_X).vehicleSize, VEHICLETYPE));
     Y(i_X).corrAns = 0;
@@ -36,10 +38,10 @@ for i_X = n_X:-1:1
     Y(i_X).customDur = 0;
     Y(i_X).objScale = objScale(X(i_X).vehicleSize, VEHICLETYPE);
     Y(i_X).objRot = objRot(X(i_X).vehicleSize, VEHICLETYPE);
-    Y(i_X).startPos = sprintf('"%g,0,2.8288"', -(X(i_X).TTCv_s_+3)*X(i_X).vV_km_h_*0.277778);
+    Y(i_X).startPos = sprintf('"%g,0,2.8288"', -(X(i_X).TTCv_s_)*X(i_X).vV_km_h_*0.277778);
     Y(i_X).endPos = '"0,0,2.8288"';
     Y(i_X).velocity = X(i_X).vV_km_h_*0.277778;
-    Y(i_X).timeVisible = 3;
+    Y(i_X).timeVisible = X(i_X).TTCv_s_;
     Y(i_X).rotationSpeedX = 0;
     Y(i_X).rotationSpeedY = 0;
     Y(i_X).rotationSpeedZ = 0;
