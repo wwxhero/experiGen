@@ -1,15 +1,8 @@
 path_input = './TTC_V/TTC_design_V_3-5.csv';
-path_output = './TTC_V/TTC_design_V_3-5_full.csv';
+path_output = './TTC_V/TTC_design_V_3-5_full';
+n_recordsPerOutput = 20;
 
-VEHICLETYPE(1).vehicleSize = 'small';
-VEHICLETYPE(1).objType = '01-Golf Variant';
-VEHICLETYPE(1).objScale = '"1, 1, 1"';
-VEHICLETYPE(1).objRot = '"-90,0,90"';
-VEHICLETYPE(2).vehicleSize = 'large';
-VEHICLETYPE(2).objType = 'PickUp_3A Variant';
-VEHICLETYPE(2).objScale = '"0.826,0.878,1"';
-VEHICLETYPE(2).objRot = '"0,90,0"';
-
+veh = VehicleObj;
 
 X_table = readtable(path_input, 'PreserveVariableNames', true);
 X = table2struct(X_table);
@@ -25,17 +18,17 @@ for i_X = n_X:-1:1
 					, X(i_X).TTCv_s_ ...
 					, X(i_X).vV_km_h_ ...
 					, X(i_X).TTCa_s_ ...
-					, objType(X(i_X).vehicleSize, VEHICLETYPE));
+					, veh.objType(X(i_X).vehicleSize));
     Y(i_X).corrAns = 0;
     Y(i_X).playSound = 'FALSE';
     Y(i_X).objNum = 1;
-    Y(i_X).objType = objType(X(i_X).vehicleSize, VEHICLETYPE);
+	Y(i_X).objType = veh.objType(X(i_X).vehicleSize);
     Y(i_X).gain = 'NA';
     Y(i_X).customMot = 'FALSE';
     Y(i_X).customFile = '""';
     Y(i_X).customDur = 0;
-    Y(i_X).objScale = objScale(X(i_X).vehicleSize, VEHICLETYPE);
-    Y(i_X).objRot = objRot(X(i_X).vehicleSize, VEHICLETYPE);
+	Y(i_X).objScale = veh.objScale_csv(X(i_X).vehicleSize);
+	Y(i_X).objRot = veh.objRot_csv(X(i_X).vehicleSize);
     Y(i_X).startPos = sprintf('"%g,0,2.8288"', -(X(i_X).TTCv_s_+3)*X(i_X).vV_km_h_*0.277778);
     Y(i_X).endPos = sprintf('"%g,0,2.8288"', -X(i_X).TTCv_s_*X(i_X).vV_km_h_*0.277778);
     Y(i_X).velocity = X(i_X).vV_km_h_*0.277778;
@@ -48,67 +41,29 @@ for i_X = n_X:-1:1
     Y(i_X).offsetZ = 0;
 end
 
+I_perm = randperm(n_X);
+Y_perm = Y;
 
+for i_I_perm = 1:n_X
+	i_Y = I_perm(i_I_perm);
+	Y_perm(i_I_perm) = Y(i_Y);
+    Y_perm(i_I_perm).trialNum = i_I_perm; % comment this line to verify the permuation
+end
 
-Y_table = struct2table(Y);
-
-% fixme: an empty string can not be expressed correctly in the output table
-writetable(Y_table, path_output);
-
-% writetable_emptystr(Y_table, path_output);
-
-% function writetable_emptystr(table, path)
-% 	[m, n] = size(table);
-%     f_out = fopen(path, 'w');
-%     row_str = table.Properties.VariableNames{1};
-%     for i_c = 2 : n
-%         row_str = row_str + "," + table.Properties.VariableNames{i_c};
-%     end
-%     fprintf(f_out, "%s", row_str);
-%     for i_r = 1 : m
-%         row_str = sprintf("%d, %s, %d, %s, %d, %s, %s" ...
-%         				, Y_table{1} ...
-%         				, Y_table{2} ...
-%         				, Y_table{3} ...
-%         				, Y_table{4} ...
-%         				, Y_table{5} ...
-%         				, Y_table{6} ...
-%         				, Y_table{7});
-%     end
-%     fclose(f_out);
-% end
+n_outputs = floor(n_X/n_recordsPerOutput);
+n_outputs = max(1, n_outputs);
+for i_output = 1:n_outputs
+	i_Y_seg_start = (i_output-1) * n_recordsPerOutput + 1;
+	i_Y_seg_end = i_Y_seg_start + n_recordsPerOutput - 1;
+	appending_leftover = (n_X - i_Y_seg_end < n_recordsPerOutput); % (n_X - (i_Y_seg_start + n_recordsPerOutput)) < n_recordsPerOutput
+	if (appending_leftover)
+		i_Y_seg_end = n_X;
+	end
+	Y_table_i = struct2table(Y_perm(i_Y_seg_start:i_Y_seg_end));
+    % fixme: an empty string can not be expressed correctly in the output table
+	path_output_i = sprintf("%s_%d.csv", path_output, i_output);
+	writetable(Y_table_i, path_output_i);
+end
 
                
 
-function v_type = objType(v_size, VehicleType)
-    [~, n_VehicleType] = size(VehicleType); 
-	for i_vt = 1:n_VehicleType
-		if (strcmp(v_size,VehicleType(i_vt).vehicleSize))
-			v_type = VehicleType(i_vt).objType;
-			return;
-        end
-	end
-	v_type = "undefined";
-end
-
-function v_scale = objScale(v_size, VehicleType)
-	[~, n_VehicleType] = size(VehicleType);
-	for i_vt = 1:n_VehicleType
-		if (strcmp(v_size,VehicleType(i_vt).vehicleSize))
-			v_scale = VehicleType(i_vt).objScale;
-			return;
-        end
-	end
-	v_scale = "undefined";
-end
-
-function v_rot = objRot(v_size, VehicleType)
-	[~, n_VehicleType] = size(VehicleType);
-	for i_vt = 1:n_VehicleType
-		if (strcmp(v_size,VehicleType(i_vt).vehicleSize))
-			v_rot = VehicleType(i_vt).objRot;
-			return;
-        end
-	end
-	v_rot = "undefined";
-end
