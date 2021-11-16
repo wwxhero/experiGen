@@ -1,5 +1,5 @@
 path_input = './SC_V/SC_design_V_3-5.csv';
-path_output = './SC_V/SC_design_V_3-5_full.csv';
+path_output = './SC_V/SC_design_V_3-5_full';
 n_recordsPerOutput = 20;
 
 % end of configuration specification
@@ -24,25 +24,26 @@ for i_X = n_X:-1:1
 					, X(i_X).TTCa_s_ ...
 					, veh.objType(X(i_X).vehicleSize));
 	Y(i_X).corrAns = 0;
-	Y(i_X).playSound = 'FALSE';
-	Y(i_X).objNum = 1;
-	Y(i_X).objType = veh.objType(X(i_X).vehicleSize);
-	Y(i_X).gain = 'NA';
-	Y(i_X).customMot = 'FALSE';
-	Y(i_X).customFile = '""';
-	Y(i_X).customDur = 0;
-	Y(i_X).objScale = veh.objScale_csv(X(i_X).vehicleSize);
-	Y(i_X).objRot = veh.objRot_csv(X(i_X).vehicleSize);
-	Y(i_X).startPos = sprintf('"%g,0,2.8288"', -(X(i_X).TTCv_s_)*X(i_X).vV_km_h_*0.277778);
-	Y(i_X).endPos = '"0,0,2.8288"';
-	Y(i_X).velocity = X(i_X).vV_km_h_*0.277778;
-	Y(i_X).timeVisible = X(i_X).TTCv_s_;
-	Y(i_X).rotationSpeedX = 0;
-	Y(i_X).rotationSpeedY = 0;
-	Y(i_X).rotationSpeedZ = 0;
-	Y(i_X).offsetX = -1;
-	Y(i_X).offsetY = 0;
-	Y(i_X).offsetZ = 0;
+	Y(i_X).playSound = false;
+	object.objNum = 1;
+	object.objType = veh.objType(X(i_X).vehicleSize);
+	object.gain = 'NA';
+	object.customMot = false;
+	object.customFile = "";
+	object.customDur = 0;
+	object.objScale = veh.objScale(X(i_X).vehicleSize);
+	object.objRot = veh.objRot(X(i_X).vehicleSize);
+	object.startPos = [-(X(i_X).TTCv_s_)*X(i_X).vV_km_h_*0.277778, 0, 2.8288];
+	object.endPos = [0, 0, 2.8288];
+	object.velocity = X(i_X).vV_km_h_*0.277778;
+	object.timeVisible = X(i_X).TTCv_s_;
+	object.rotationSpeedX = 0;
+	object.rotationSpeedY = 0;
+	object.rotationSpeedZ = 0;
+	object.offsetX = -1;
+	object.offsetY = 0;
+	object.offsetZ = 0;
+	Y(i_X).objects = {object};
 end
 
 I_perm = randperm(n_X);
@@ -63,8 +64,10 @@ for i_output = 1:n_outputs
 	if (appending_leftover)
 		i_Y_seg_end = n_X;
 	end
-	Y_table_i = struct2table(Y_perm(i_Y_seg_start:i_Y_seg_end));
-	% fixme: an empty string can not be expressed correctly in the output table
-	path_output_i = sprintf("%s_%d.csv", path_output, i_output);
-	writetable(Y_table_i, path_output_i);
+	output_js.trials = Y_perm(i_Y_seg_start:i_Y_seg_end);
+	Y_json = jsonencode(output_js, 'PrettyPrint', true);
+	path_output_i = sprintf("%s_%d.json", path_output, i_output);
+	f_out = fopen(path_output_i, 'w');
+	fprintf(f_out, Y_json);
+	fclose(f_out);
 end
