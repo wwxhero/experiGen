@@ -1,7 +1,7 @@
 % start of the specifications
 
 path_input = './TTC_AV/TTC_design_AV_3-5.csv';
-path_output = './TTC_AV/TTC_design_AV_3-5_full.csv';
+path_output = './TTC_AV/TTC_design_AV_3-5_full';
 n_recordsPerOutput = 20;
 
 % end of the changable specifications
